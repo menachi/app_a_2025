@@ -8,7 +8,7 @@ GET http://localhost:3000/posts
 
 ###
 
-GET http://localhost:3000/posts/67310669e54ac50b7beee619
+GET http://localhost:3000/posts/6734d959d9d641367d22f61f
 
 ###
 

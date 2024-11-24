@@ -43,8 +43,14 @@ const createPost = async (req, res) => {
   }
 };
 
-const deletePost = (req, res) => {
-  res.send("delete a post");
+const deletePost = async (req, res) => {
+  const id = req.params.id;
+  try {
+    await Posts.findByIdAndDelete(id);
+    return res.send("Post deleted");
+  } catch (err) {
+    return res.status(400).send(err.message);
+  }
 };
 
 module.exports = {
