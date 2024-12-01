@@ -1,4 +1,4 @@
-const initApp = require("./server");
+import initApp from "./server";
 const port = process.env.PORT;
 
 initApp()
@@ -10,3 +10,5 @@ initApp()
   .catch(() => {
     console.log("Error Fail starting the server");
   });
+
+

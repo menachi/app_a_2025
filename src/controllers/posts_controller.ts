@@ -1,6 +1,8 @@
-const Posts = require("../models/posts_model");
-const { ObjectId } = require("mongoose");
-const getAllPosts = async (req, res) => {
+import Posts from "../models/posts_model";
+import { ObjectId } from "mongoose";
+import { Request, Response } from "express";
+
+const getAllPosts = async (req: Request, res: Response) => {
   const filter = req.query;
   console.log(filter);
   try {
@@ -16,7 +18,7 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-const getPostById = async (req, res) => {
+const getPostById = async (req: Request, res: Response) => {
   const id = req.params.id;
   if (id) {
     try {
@@ -30,10 +32,10 @@ const getPostById = async (req, res) => {
       return res.status(400).send(err.message);
     }
   }
-  return res.status(400).send(err.message);
+  return res.status(400).send("invalid id");
 };
 
-const createPost = async (req, res) => {
+const createPost = async (req: Request, res: Response) => {
   console.log(req.body);
   try {
     const post = await Posts.create(req.body);
@@ -43,7 +45,7 @@ const createPost = async (req, res) => {
   }
 };
 
-const deletePost = async (req, res) => {
+const deletePost = async (req: Request, res: Response) => {
   const id = req.params.id;
   try {
     await Posts.findByIdAndDelete(id);
@@ -53,7 +55,7 @@ const deletePost = async (req, res) => {
   }
 };
 
-module.exports = {
+export default {
   getAllPosts,
   createPost,
   deletePost,
