@@ -1,12 +1,13 @@
-const express = require("express");
+import express, { Express } from "express";
 const app = express();
-const dotenv = require("dotenv").config();
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
-const posts_routes = require("./routes/posts_routes");
+import dotenv from "dotenv";
+dotenv.config();
+import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import posts_routes from "./routes/posts_routes";
 
-const initApp = () => {
-  return new Promise((resolve, reject) => {
+const initApp = (): Promise<Express> => {
+  return new Promise<Express>((resolve, reject) => {
     const db = mongoose.connection;
     db.on("error", console.error.bind(console, "connection error:"));
     db.once("open", function () {
@@ -26,4 +27,4 @@ const initApp = () => {
   });
 };
 
-module.exports = initApp;
+export default initApp;

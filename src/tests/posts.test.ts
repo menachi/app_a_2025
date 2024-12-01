@@ -1,7 +1,7 @@
-const request = require("supertest");
-const initApp = require("../server");
-const mongoose = require("mongoose");
-const postsModel = require("../models/posts_model");
+import request from "supertest";
+import initApp from "../server";
+import mongoose from "mongoose";
+import postsModel from "../models/posts_model";
 
 var app = null;
 
