@@ -2,8 +2,9 @@ import request from "supertest";
 import initApp from "../server";
 import mongoose from "mongoose";
 import postsModel from "../models/posts_model";
+import { Express } from "express";
 
-var app = null;
+let app: Express;
 
 beforeAll(async () => {
   console.log("init app");
