@@ -4,17 +4,20 @@
   "description": "This is class example",
   "main": "app.js",
   "scripts": {
-    "start": "tsc && node ./dist/app.js",
+    "start": "tsc && node ./dist/src/app.js",
     "dev": "nodemon ./src/app.ts",
     "test": "tsc && jest --detectOpenHandles --forceExit",
+    "testAuth": "tsc && jest --detectOpenHandles --forceExit auth.test.ts",
     "lint": "eslint . --ext .ts"
   },
   "author": "Eliav Menachi",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1"
   },
   "devDependencies": {
