@@ -1,5 +1,6 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import postsController from "../controllers/posts_controller";
+import { authMiddleware } from "../controllers/auth_controller";
 
 const router = express.Router();
 
@@ -12,11 +13,11 @@ router.get("/:id", (req: Request, res: Response) => {
     postsController.getById(req, res);
 });
 
-router.post("/", (req: Request, res: Response) => {
+router.post("/", authMiddleware, (req: Request, res: Response) => {
     postsController.createItem(req, res);
 });
 
-router.delete("/:id", (req: Request, res: Response) => {
+router.delete("/:id", authMiddleware, (req: Request, res: Response) => {
     postsController.deleteItem(req, res);
 });
 

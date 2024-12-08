@@ -4,12 +4,14 @@ import mongoose from "mongoose";
 // import postsModel from "../models/posts_model";
 import { Express } from "express";
 import userModel from "../models/user_model";
+import postsModel from "../models/posts_model";
 
 let app: Express;
 
 beforeAll(async () => {
   app = await initApp();
   await userModel.deleteMany();
+  await postsModel.deleteMany();
 });
 
 afterAll(async () => {
@@ -30,8 +32,12 @@ const userInfo: UserInfo = {
 describe("Auth Tests", () => {
   test("Auth Registration", async () => {
     const response = await request(app).post("/auth/register").send(userInfo);
-    console.log(response.body);
     expect(response.statusCode).toBe(200);
+  });
+
+  test("Auth Registration fail", async () => {
+    const response = await request(app).post("/auth/register").send(userInfo);
+    expect(response.statusCode).not.toBe(200);
   });
 
   test("Auth Login", async () => {
@@ -48,7 +54,7 @@ describe("Auth Tests", () => {
 
   test("Get protected API", async () => {
     const response = await request(app).post("/posts").send({
-      owner: userInfo._id,
+      owner: "invalid owner",
       title: "My First post",
       content: "This is my first post",
     });
@@ -56,10 +62,21 @@ describe("Auth Tests", () => {
     const response2 = await request(app).post("/posts").set({
       authorization: 'jwt ' + userInfo.token
     }).send({
-      owner: userInfo._id,
+      owner: "invalid owner",
       title: "My First post",
       content: "This is my first post",
     });
     expect(response2.statusCode).toBe(201);
+  });
+
+  test("Get protected API invalid token", async () => {
+    const response = await request(app).post("/posts").set({
+      authorization: 'jwt ' + userInfo.token + '1'
+    }).send({
+      owner: userInfo._id,
+      title: "My First post",
+      content: "This is my first post",
+    });
+    expect(response.statusCode).not.toBe(201);
   });
 });
