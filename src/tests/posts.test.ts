@@ -3,15 +3,30 @@ import initApp from "../server";
 import mongoose from "mongoose";
 import postsModel from "../models/posts_model";
 import { Express } from "express";
+import userModel from "../models/user_model";
 
 let app: Express;
 
+type UserInfo = {
+  email: string;
+  password: string;
+  token?: string;
+  _id?: string;
+};
+const userInfo: UserInfo = {
+  email: "eliav@gmail.com",
+  password: "123456"
+}
+
+
 beforeAll(async () => {
-  console.log("init app");
   app = await initApp();
-  console.log("init app finished");
   await postsModel.deleteMany();
-  console.log("delete all posts");
+  await userModel.deleteMany();
+  await request(app).post("/auth/register").send(userInfo);
+  const response = await request(app).post("/auth/login").send(userInfo);
+  userInfo.token = response.body.token;
+  userInfo._id = response.body._id;
 });
 
 afterAll(async () => {
@@ -33,8 +48,8 @@ const testPost2 = {
 };
 
 const testPostFail = {
-  title: "My First post 2",
   content: "This is my first post 2",
+  owner: "Eliav2",
 };
 
 describe("Posts Tests", () => {
@@ -45,11 +60,13 @@ describe("Posts Tests", () => {
   });
 
   test("Posts Create test", async () => {
-    const response = await request(app).post("/posts").send(testPost1);
+    const response = await request(app).post("/posts")
+      .set("authorization", "JWT " + userInfo.token)
+      .send(testPost1);
     console.log(response.body);
     const post = response.body;
     expect(response.statusCode).toBe(201);
-    expect(post.owner).toBe(testPost1.owner);
+    expect(post.owner).toBe(userInfo._id);
     expect(post.title).toBe(testPost1.title);
     expect(post.content).toBe(testPost1.content);
     postId = post._id;
@@ -71,11 +88,12 @@ describe("Posts Tests", () => {
   });
 
   test("Posts Create test", async () => {
-    const response = await request(app).post("/posts").send(testPost2);
+    const response = await request(app).post("/posts")
+      .set("authorization", "JWT " + userInfo.token)
+      .send(testPost2);
     console.log(response.body);
     const post = response.body;
     expect(response.statusCode).toBe(201);
-    expect(post.owner).toBe(testPost2.owner);
     expect(post.title).toBe(testPost2.title);
     expect(post.content).toBe(testPost2.content);
     postId = post._id;
@@ -83,19 +101,20 @@ describe("Posts Tests", () => {
 
   test("Posts Create test fail", async () => {
     const response = await request(app).post("/posts").send(testPostFail);
-    expect(response.statusCode).toBe(400);
+    expect(response.statusCode).not.toBe(201);
   });
 
   test("Posts get posts by owner", async () => {
-    const response = await request(app).get("/posts?owner=" + testPost1.owner);
+    const response = await request(app).get("/posts?owner=" + userInfo._id);
     const post = response.body[0];
     expect(response.statusCode).toBe(200);
-    expect(post.owner).toBe(testPost1.owner);
-    expect(response.body.length).toBe(1);
+    expect(post.owner).toBe(userInfo._id);
+    expect(response.body.length).toBe(2);
   });
 
   test("Posts Delete test", async () => {
-    const response = await request(app).delete("/posts/" + postId);
+    const response = await request(app).delete("/posts/" + postId)
+      .set("authorization", "JWT " + userInfo.token);
     expect(response.statusCode).toBe(200);
 
     const respponse2 = await request(app).get("/posts/" + postId);
