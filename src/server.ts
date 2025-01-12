@@ -4,11 +4,13 @@ import dotenv from "dotenv";
 dotenv.config();
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
-import posts_routes from "./routes/posts_routes";
-import comments_routes from "./routes/comments_routes";
-import auth_routes from "./routes/auth_routes";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
+import file_routes from "./routes/file_routes";
+import auth_routes from "./routes/auth_routes";
+import comments_routes from "./routes/comments_routes";
+import posts_routes from "./routes/posts_routes";
+
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,6 +23,9 @@ app.use((req, res, next) => {
 app.use("/posts", posts_routes);
 app.use("/comments", comments_routes);
 app.use("/auth", auth_routes);
+app.use("/public/", express.static("public"));
+app.use("/storage/", express.static("storage"));
+app.use("/file/", file_routes);
 
 const options = {
   definition: {
